@@ -174,9 +174,9 @@ public class PPPGui extends javax.swing.JFrame {
     	{
     		filesOK[i]=true;
     		String fname = textFields[i].getText();
-    		if (fname.equalsIgnoreCase(""))
+    		if (fname.equals(""))
     		{
-    			System.out.println(fname + " is empty!");
+    			System.out.println(labels[i] + " is empty!");
     			filesOK[i]=false;
     			continue;
     		}

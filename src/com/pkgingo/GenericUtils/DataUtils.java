@@ -3,7 +3,9 @@ package com.pkgingo.GenericUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -18,6 +20,8 @@ public class DataUtils
 	public static boolean debug=false;
 	private static final Date buildDate = getClassBuildTime();
 	private static String OS = null;
+	private static String debugFile="E:\\debug.txt";
+	private static boolean useDebugFile=false;
 	
 	
 	   
@@ -85,14 +89,29 @@ public class DataUtils
 	}
 	public static void DebugPrint(Object line)
 	{
+		String l = "" + line;
 		if (debug)
 		{
 			System.out.print(line);
+			if (useDebugFile)
+			{
+				try
+				{
+					PrintWriter p = new PrintWriter(new FileOutputStream(debugFile,true));
+					p.write(l);
+					p.close();
+				}
+				catch (FileNotFoundException e)
+				{
+					return;
+				}
+			}
 		}
 	}
 	
 	public static void DebugPrintln(Object line, boolean force)
 	{
+		
 		boolean t=debug;
 		debug=force;
 		DebugPrintln(line);
@@ -101,9 +120,23 @@ public class DataUtils
 	
 	public static void DebugPrintln(Object line)
 	{
+		String l = "" + line;
 		if (debug)
 		{
 			System.out.println(line);
+			if (useDebugFile)
+			{
+				try
+				{
+					PrintWriter p = new PrintWriter(new FileOutputStream(debugFile,true));
+					p.write(l+"\n");
+					p.close();
+				}
+				catch (FileNotFoundException e)
+				{
+					return;
+				}
+			}
 		}
 	}
 	

@@ -123,6 +123,11 @@ public class PPPFile {
 			DataUtils.DebugPrintln("Got event type: " + line.getLineType());
 			DataUtils.DebugPrintln("Curr ms: " + currMS + " (ms delta: " + line.getMsLineDeltaInt() + ")");
 			pos = quantizeToMeasurePosition(currMS);
+			if (pos.getBeat() < 0)
+			{
+				System.out.println(DataUtils.bytesToHex(line.getRawDataBytes()));
+				System.exit(0);
+			}
 			switch (line.getLineType())
 			{
 				case EOF:
@@ -404,6 +409,7 @@ public class PPPFile {
 				measure--;
 				msEventd+=l[measure];
 				msEventd--;
+				if (msEventd<0) msEventd=0; // case for when it falls EXACTLY on a boundary
 				break;
 			}
 			if (msEventd-l[measure]>=0)
@@ -450,6 +456,11 @@ public class PPPFile {
 		
 
 		DataUtils.DebugPrintln("Event occurs in beat slot " + beatSlot + " with excess of " + msEventd + "ms.");
+		
+		//save data before quantizing to compare
+		int oldBeatSlot=beatSlot;
+		int oldBeat=beat;
+		int oldMeasure=measure;
 		DataUtils.DebugPrintln("------------");
 		
 		//enhance quantizing, first lets see if we have the last beat slot
@@ -508,6 +519,10 @@ public class PPPFile {
 			
 		}
 		
+		if (beatSlot!=oldBeatSlot)
+		{
+			DataUtils.DebugPrintln("Quantized from " + oldMeasure + ":" +oldBeat+ ":"+ oldBeatSlot+ " to " + measure + ":" +beat+ ":"+ beatSlot);
+		}
 		
 		//create a position entry 
 		return new PPPEventPosition(measure, beat, beatSlot, msEvent);
